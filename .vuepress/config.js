@@ -10,6 +10,7 @@ module.exports = {
     sidebar: [
       '/',
       '/textbooks/',
+      '/cps_data/'
     ]
   }
 }
