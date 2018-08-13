@@ -1,6 +1,7 @@
 module.exports = {
   title: 'Intro to Econometrics',
   description: 'ECON 417 McGarvey',
+  base: '/Econ-417-McGarvey/',
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
