@@ -1,7 +1,10 @@
 module.exports = {
-  title: 'Intro to Econometrics',
+  title: 'Econometrics',
   description: 'ECON 417 McGarvey',
   base: '/Econ-417-McGarvey/',
+  head: [
+    ['link', { rel: 'shortcut icon', type: "image/x-icon", href: `./favicon.ico` }]
+  ],
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
@@ -10,7 +13,9 @@ module.exports = {
     sidebar: [
       '/',
       '/textbooks/',
-      '/cps_data/'
+      '/cps_data/',
+      '/resources/',
+      '/SHAZAM/'
     ]
   }
 }
