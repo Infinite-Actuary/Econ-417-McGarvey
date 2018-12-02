@@ -1,17 +1,17 @@
 ### Created with [VuePress](https://vuepress.vuejs.org/).
 
 ```bash
-# start writting
+# start server
 vuepress dev
 
 # build
 vuepress build
 
-# view new build
+# view build
 cd .vuepress/dist/
 ls -al
 
-# push new buile
+# push new build
 git init
 git add -A
 git commit -m 'update content'
