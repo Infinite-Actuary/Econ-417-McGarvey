@@ -1,0 +1,91 @@
+* principles of econometrics 5th edition, hill
+* problem 7.20 (pg 360)
+* predicting costs of american universites
+
+* TC = real ($2008) total cost per student
+* FTUG = number of full-time undergraduate students (1000s)
+* FTGRAD = number of full-time graduate students (1000s)
+* FTEF = full-time faculty per 100 students
+* CF = number of contract faculty per 100 students
+* FTENAP = full-time nonacademic professionals per 100 students
+
+read (poolcoll2.dat) unitid year private aca cf d1987 d1989 d1991 d1999 d2002 d2005 ftef ftenap ftenpro ftepro ftestu ftgrad ftug tc / skiplines = 1
+
+* a) estime the regression of ln(TC) on the remaining variables. what are the predicted effects of additional
+* undergraduate students and graduate students on total cost per student?
+
+genr ltc = log (tc)
+* log-linear model => log(tc) ~ ftug + ftgrad +ftef + cf + ftenap
+* a unit change on the right produces a 1% unit change on the left
+ols ltc ftug ftgrad ftef cf ftenap
+
+* FTUG = -0.011146 => additional 1000 undergraduate students reduces expected total cost by 1.11%
+* FTGRAD = 0.068201 => additional 1000 graduate students estimated to increase expected total cost per student by 6.82%
+* graduate students are a cost center
+
+* b) what are the predicted effects of additional full-time faculty, contract faculty, and nonacademic professionals on
+* total cost per student
+
+* FTEF = 0.080987 => estimate additional full-time faculty member (per 100 students) increases expected total cost per student by 8.1%
+* CF = -0.039210 => additional contract faculty are estimated to reduce expected total cost per student by 3.92%
+* FTENAP = 0.036484 => additional executive and professional employess are estimated to increase expected total cost per student by 3.65%
+
+* c) add the indicator variable private to the model. Do you predict higher or lower cost per student at private university? Is it statistically significant?
+ols ltc ftug ftgrad ftef cf ftenap private
+* PRIVATE = 0.25 => expected total cost per student approx 25% higher at private universities. p-value = 0.000 => significant at 1% level
+
+* d) add PRIVATE * FTEF to the model. Are these variables individually & jointly significant at the 5% level?
+genr pri_ftef = private * ftef
+ols ltc ftug ftgrad ftef cf ftenap private pri_ftef
+* PRIVATE = 0.71249 with T-RATIO = 13.45 => individually significant
+* PRI_FTEF = -0.060349 with T-RATIO = -10.30 => individually significant
+
+* test H0: PRIVATE = 0 and PRI_FTEF = 0
+test
+test private = 0
+test pri_ftef = 0
+end
+* F = 92.577822 > inv-F(0.99, 2, 1025) = 4.62592 => PRIVATE & PRI_FTEF are jointly significant
+
+* e) add to the model PRIVATE times all other variables.
+genr pri_ftug = private * ftug
+genr pri_ftgrad = private * ftgrad
+genr pri_cf = private * cf
+genr pri_ftenap = private * ftenap
+
+ols ltc ftug ftgrad ftef cf ftenap private pri_ftef pri_ftug pri_ftgrad pri_cf pri_ftenap
+* NOTE: ERROR = 93.073 (used in part (f))
+
+* test H0: PRIVATE = PRI_FTEF = PRI_FTUG = PRI_FTGRAD = PRI_CF = PRI_FTENAP = 0
+test
+test private = 0
+test pri_ftef = 0
+test pri_ftug = 0
+test pri_ftgrad = 0
+test pri_cf = 0
+test pri_ftenap = 0
+end
+* F = 50.807614 > inv-F(0.99, 6, 1021) = 2.81962 => all private related coefficients are jointly significant at 1% level
+* because individually the coefficients are significant (look at T-RATIO or P-VALUE) we conclude that our model
+* in part (a) is misspecified. The factors that affect tota cost at public and private universities are perhaps the same,
+* but the coefficients are different.
+
+* f) estimate the model in part (a) twice, once for private universities and once for public universities.
+set nowarnskip
+* use observations from private universities
+skipif (private.eq.0)
+ols ltc ftug ftgrad ftef cf ftenap
+* N = 333, SSE1 = 53.192
+* R-SQUARE = 0.6885, R-SQUARE ADJUSTED = 0.6837
+
+* use observations from public universities
+* to use original sample data we must remove the conditions created by skipif
+delete skip$
+skipif (private.eq.1)
+ols ltc ftug ftgrad ftef cf ftenap
+* N = 700, SSE0 = 39.880
+* R-SQUARE = 0.7772, R-SQUARE ADJUSTED = 0.7756
+
+* SSE0 + SSE1 = 39.880 + 53.192 = 93.072
+* This result always holds. The fully interacted model is equivalent to estimating the model twice,
+* since all the coefficients are allowed to differ.
